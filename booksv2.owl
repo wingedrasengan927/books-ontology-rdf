@@ -1,0 +1,738 @@
+@prefix : <http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology> .
+
+<http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology> rdf:type owl:Ontology ;
+                                                                       rdfs:comment "A book Ontology that describes various books and their relations" ,
+                                                                                    "Created by Neeraj Krishna - ms.neerajkrishna"@gmail.com .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasAuthoredBy
+:hasAuthoredBy rdf:type owl:ObjectProperty ;
+               owl:inverseOf :isAuthorOf ;
+               rdfs:domain :Books ;
+               rdfs:range :Author .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasBornCountry
+:hasBornCountry rdf:type owl:ObjectProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain :Person ;
+                rdfs:range :Country ;
+                rdfs:comment "The country where the person is born. It's a functional property" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasGenre
+:hasGenre rdf:type owl:ObjectProperty ;
+          rdfs:domain :Books ;
+          rdfs:range :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#isAuthorOf
+:isAuthorOf rdf:type owl:ObjectProperty ;
+            rdfs:domain :Author ;
+            rdfs:range :Books .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasBornYear
+:hasBornYear rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Person ;
+             rdfs:range xsd:integer ;
+             rdfs:comment "The year the author has been born" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasNoOfPages
+:hasNoOfPages rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Books ;
+              rdfs:range xsd:integer ;
+              rdfs:comment "Number of pages in the book" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasPublishedYear
+:hasPublishedYear rdf:type owl:DatatypeProperty ;
+                  rdfs:domain :Books ;
+                  rdfs:range xsd:integer ;
+                  rdfs:comment "The year the book was published" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#hasSeries
+:hasSeries rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Books ;
+           rdfs:range xsd:integer ;
+           rdfs:comment "Number of books present in the series" .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Author
+:Author rdf:type owl:Class ;
+        rdfs:subClassOf :Person .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#BigSize
+:BigSize rdf:type owl:Class ;
+         owl:equivalentClass [ owl:intersectionOf ( :Books
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty :hasNoOfPages ;
+                                                      owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                           owl:onDatatype xsd:integer ;
+                                                                           owl:withRestrictions ( [ xsd:minInclusive 400
+                                                                                                  ]
+                                                                                                )
+                                                                         ]
+                                                    ]
+                                                  ) ;
+                               rdf:type owl:Class
+                             ] ;
+         owl:disjointWith :SmallSize ;
+         rdfs:comment "A big book is the one that has more than 400 pages" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Books
+:Books rdf:type owl:Class ;
+       owl:disjointWith :Country ;
+       rdfs:comment "books categorized based on data property" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Classics
+:Classics rdf:type owl:Class ;
+          owl:equivalentClass [ owl:intersectionOf ( :Books
+                                                     [ rdf:type owl:Restriction ;
+                                                       owl:onProperty :hasPublishedYear ;
+                                                       owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                            owl:onDatatype xsd:integer ;
+                                                                            owl:withRestrictions ( [ xsd:maxInclusive 1990
+                                                                                                   ]
+                                                                                                 )
+                                                                          ]
+                                                     ]
+                                                   ) ;
+                                rdf:type owl:Class
+                              ] ;
+          owl:disjointWith :Latest ;
+          rdfs:comment "CLassics are the books which were published before 1990" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Country
+:Country rdf:type owl:Class ;
+         owl:equivalentClass [ rdf:type owl:Class ;
+                               owl:oneOf ( :United_Kingdom
+                                           :United_States_of_America
+                                         )
+                             ] ;
+         owl:disjointWith :Genre ,
+                          :Person .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Duology
+:Duology rdf:type owl:Class ;
+         owl:equivalentClass [ owl:intersectionOf ( :Books
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty :hasSeries ;
+                                                      owl:qualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                                      owl:onDataRange owl:rational
+                                                    ]
+                                                  ) ;
+                               rdf:type owl:Class
+                             ] ;
+         owl:disjointWith :Trilogy ;
+         rdfs:comment "If a series has 2 books, it's called a duology" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Genre
+:Genre rdf:type owl:Class ;
+       owl:equivalentClass [ rdf:type owl:Class ;
+                             owl:oneOf ( :Action
+                                         :Adventure
+                                         :Crime
+                                         :Education
+                                         :Fantasy
+                                         :Fiction
+                                         :History
+                                         :Horror
+                                         :Mystery
+                                         :Non-Fiction
+                                         :Philosophy
+                                         :Psychology
+                                         :Romance
+                                         :Science
+                                         :Self-Help
+                                         :Thriller
+                                         :Zen
+                                       )
+                           ] ;
+       rdfs:comment "Change Equivalent class as you update the individuals" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Latest
+:Latest rdf:type owl:Class ;
+        owl:equivalentClass [ owl:intersectionOf ( :Books
+                                                   [ rdf:type owl:Restriction ;
+                                                     owl:onProperty :hasPublishedYear ;
+                                                     owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                          owl:onDatatype xsd:integer ;
+                                                                          owl:withRestrictions ( [ xsd:minInclusive 2015
+                                                                                                 ]
+                                                                                               )
+                                                                        ]
+                                                   ]
+                                                 ) ;
+                              rdf:type owl:Class
+                            ] ;
+        rdfs:comment "Latest books are published after 2015" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Person
+:Person rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#SmallSize
+:SmallSize rdf:type owl:Class ;
+           owl:equivalentClass [ owl:intersectionOf ( :Books
+                                                      [ rdf:type owl:Restriction ;
+                                                        owl:onProperty :hasNoOfPages ;
+                                                        owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                             owl:onDatatype xsd:integer ;
+                                                                             owl:withRestrictions ( [ xsd:maxInclusive 200
+                                                                                                    ]
+                                                                                                  )
+                                                                           ]
+                                                      ]
+                                                    ) ;
+                                 rdf:type owl:Class
+                               ] ;
+           rdfs:comment "A book is small if it has less than 200 pages" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Trilogy
+:Trilogy rdf:type owl:Class ;
+         owl:equivalentClass [ owl:intersectionOf ( :Books
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty :hasSeries ;
+                                                      owl:qualifiedCardinality "3"^^xsd:nonNegativeInteger ;
+                                                      owl:onDataRange owl:rational
+                                                    ]
+                                                  ) ;
+                               rdf:type owl:Class
+                             ] ;
+         rdfs:comment "If a series has 3 books, it's called a duology" .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Action
+:Action rdf:type owl:NamedIndividual ,
+                 :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Adventure
+:Adventure rdf:type owl:NamedIndividual ,
+                    :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Agatha_Christie
+:Agatha_Christie rdf:type owl:NamedIndividual ,
+                          :Author ;
+                 :hasBornCountry :United_Kingdom ;
+                 :isAuthorOf :And_Then_There_Were_None ,
+                             :Murder_on_the_Orient_Express ,
+                             :The_Murder_of_Roger_Ackroyd ;
+                 :hasBornYear 1890 ;
+                 rdfs:label "Agatha Christie" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Alan_Watts
+:Alan_Watts rdf:type owl:NamedIndividual ,
+                     :Author ;
+            :hasBornCountry :United_Kingdom ;
+            :isAuthorOf :Become_what_you_are ,
+                        :The_Wisdom_of_Insecurity ;
+            :hasBornYear 1915 ;
+            rdfs:label "Alan Watts" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Alices_Adventures_in_Wonderland
+:Alices_Adventures_in_Wonderland rdf:type owl:NamedIndividual ,
+                                          :Books ;
+                                 :hasAuthoredBy :Lewis_Carroll ;
+                                 :hasGenre :Fantasy ,
+                                           :Fiction ;
+                                 :hasNoOfPages 163 ;
+                                 :hasPublishedYear 1865 ;
+                                 rdfs:label "Alice's Adventures in Wonderland" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#And_Then_There_Were_None
+:And_Then_There_Were_None rdf:type owl:NamedIndividual ,
+                                   :Books ;
+                          :hasAuthoredBy :Agatha_Christie ;
+                          :hasGenre :Crime ,
+                                    :Fiction ,
+                                    :Mystery ,
+                                    :Thriller ;
+                          :hasNoOfPages 272 ;
+                          :hasPublishedYear 1939 ;
+                          rdfs:label "And Then There Were None" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Austin_Kleon
+:Austin_Kleon rdf:type owl:NamedIndividual ,
+                       :Author ;
+              :hasBornCountry :United_States_of_America ;
+              :isAuthorOf :Steal_Like_an_Artist ;
+              :hasBornYear 1983 ;
+              rdfs:label "Austin Kleon" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Become_what_you_are
+:Become_what_you_are rdf:type owl:NamedIndividual ,
+                              :Books ;
+                     :hasAuthoredBy :Alan_Watts ;
+                     :hasGenre :Non-Fiction ,
+                               :Philosophy ,
+                               :Zen ;
+                     :hasNoOfPages 146 ;
+                     :hasPublishedYear 1995 ;
+                     rdfs:label "Become what you are" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Charles_Duhigg
+:Charles_Duhigg rdf:type owl:NamedIndividual ,
+                         :Author ;
+                :hasBornCountry :United_States_of_America ;
+                :isAuthorOf :The_Power_of_Habit ;
+                :hasBornYear 1974 ;
+                rdfs:label "Charles Duhigg" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Crime
+:Crime rdf:type owl:NamedIndividual ,
+                :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Education
+:Education rdf:type owl:NamedIndividual ,
+                    :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Ernest_Hemingway
+:Ernest_Hemingway rdf:type owl:NamedIndividual ,
+                           :Author ;
+                  :hasBornCountry :United_States_of_America ;
+                  :isAuthorOf :The_Old_Man_and_the_Sea ;
+                  :hasBornYear 1899 ;
+                  rdfs:label "Ernest Hemingway" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Everything_Is_Fucked
+:Everything_Is_Fucked rdf:type owl:NamedIndividual ,
+                               :Books ;
+                      :hasAuthoredBy :Mark_Manson ;
+                      :hasGenre :Non-Fiction ,
+                                :Philosophy ,
+                                :Psychology ,
+                                :Self-Help ;
+                      :hasNoOfPages 314 ;
+                      :hasPublishedYear 2019 ;
+                      rdfs:label "Everything Is Fucked" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Fantasy
+:Fantasy rdf:type owl:NamedIndividual ,
+                  :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Fiction
+:Fiction rdf:type owl:NamedIndividual ,
+                  :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#History
+:History rdf:type owl:NamedIndividual ,
+                  :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Horror
+:Horror rdf:type owl:NamedIndividual ,
+                 :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Lewis_Carroll
+:Lewis_Carroll rdf:type owl:NamedIndividual ,
+                        :Author ;
+               :hasBornCountry :United_Kingdom ;
+               :isAuthorOf :Alices_Adventures_in_Wonderland ;
+               :hasBornYear 1832 ;
+               rdfs:label "Lewis Carroll" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#ML_Wang
+:ML_Wang rdf:type owl:NamedIndividual ,
+                  :Author ;
+         :hasBornCountry :United_States_of_America ;
+         :isAuthorOf :The_Sword_of_Kaigen ;
+         :hasBornYear 1992 ;
+         rdfs:label "M.L. Wang" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Malcolm_Gladwell
+:Malcolm_Gladwell rdf:type owl:NamedIndividual ,
+                           :Author ;
+                  :hasBornCountry :United_Kingdom ;
+                  :isAuthorOf :Outliers ,
+                              :Talking_to_Strangers ,
+                              :The_Tipping_Point ;
+                  :hasBornYear 1963 ;
+                  rdfs:label "Malcolm Gladwell" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Mark_Manson
+:Mark_Manson rdf:type owl:NamedIndividual ,
+                      :Author ;
+             :hasBornCountry :United_States_of_America ;
+             :isAuthorOf :Everything_Is_Fucked ,
+                         :The_Subtle_Art_of_Not_Giving_a_Fuck ;
+             :hasBornYear 1984 ;
+             rdfs:label "Mark Manson" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Murder_on_the_Orient_Express
+:Murder_on_the_Orient_Express rdf:type owl:NamedIndividual ,
+                                       :Books ;
+                              :hasAuthoredBy :Agatha_Christie ;
+                              :hasGenre :Crime ,
+                                        :Fiction ,
+                                        :Mystery ,
+                                        :Thriller ;
+                              :hasNoOfPages 256 ;
+                              :hasPublishedYear 1934 ;
+                              rdfs:label "Murder on the Orient Express" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Mystery
+:Mystery rdf:type owl:NamedIndividual ,
+                  :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Non-Fiction
+:Non-Fiction rdf:type owl:NamedIndividual ,
+                      :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Outliers
+:Outliers rdf:type owl:NamedIndividual ,
+                   :Books ;
+          :hasAuthoredBy :Malcolm_Gladwell ;
+          :hasGenre :History ,
+                    :Non-Fiction ,
+                    :Psychology ,
+                    :Self-Help ;
+          :hasNoOfPages 304 ;
+          :hasPublishedYear 2008 ;
+          rdfs:comment "Outliers" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Philosophy
+:Philosophy rdf:type owl:NamedIndividual ,
+                     :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Psychology
+:Psychology rdf:type owl:NamedIndividual ,
+                     :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Robert_Greene
+:Robert_Greene rdf:type owl:NamedIndividual ,
+                        :Author ;
+               :hasBornCountry :United_States_of_America ;
+               :isAuthorOf :The_48_Laws_of_Power ,
+                           :The_50th_Law ,
+                           :The_Laws_of_Human_Nature ;
+               :hasBornYear 1959 ;
+               rdfs:label "Robert Greene" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Romance
+:Romance rdf:type owl:NamedIndividual ,
+                  :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Samantha_Shannon
+:Samantha_Shannon rdf:type owl:NamedIndividual ,
+                           :Author ;
+                  :hasBornCountry :United_Kingdom ;
+                  :isAuthorOf :The_Priory_of_the_Orange_Tree ;
+                  :hasBornYear 1991 ;
+                  rdfs:label "Samantha S Shannon" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Science
+:Science rdf:type owl:NamedIndividual ,
+                  :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Self-Help
+:Self-Help rdf:type owl:NamedIndividual ,
+                    :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Steal_Like_an_Artist
+:Steal_Like_an_Artist rdf:type owl:NamedIndividual ,
+                               :Books ;
+                      :hasAuthoredBy :Austin_Kleon ;
+                      :hasGenre :Non-Fiction ,
+                                :Self-Help ;
+                      :hasNoOfPages 161 ;
+                      :hasPublishedYear 2012 ;
+                      rdfs:label "Steal Like an Artist" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Talking_to_Strangers
+:Talking_to_Strangers rdf:type owl:NamedIndividual ,
+                               :Books ;
+                      :hasAuthoredBy :Malcolm_Gladwell ;
+                      :hasGenre :Education ,
+                                :Non-Fiction ,
+                                :Psychology ,
+                                :Self-Help ;
+                      :hasNoOfPages 400 ;
+                      :hasPublishedYear 2019 ;
+                      rdfs:label "Talking to Strangers" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The4HourBody
+:The4HourBody rdf:type owl:NamedIndividual ,
+                       :Books ;
+              :hasAuthoredBy :Tim_Ferriss ;
+              :hasGenre :Education ,
+                        :Non-Fiction ,
+                        :Science ,
+                        :Self-Help ;
+              :hasNoOfPages 592 ;
+              :hasPublishedYear 2010 ;
+              rdfs:label "The 4-Hour Body" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The4HourChef
+:The4HourChef rdf:type owl:NamedIndividual ,
+                       :Books ;
+              :hasAuthoredBy :Tim_Ferriss ;
+              :hasGenre :Education ,
+                        :Non-Fiction ,
+                        :Psychology ,
+                        :Self-Help ;
+              :hasNoOfPages 678 ;
+              :hasPublishedYear 2012 ;
+              rdfs:label "The 4-Hour Chef" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The4HourWorkWeek
+:The4HourWorkWeek rdf:type owl:NamedIndividual ,
+                           :Books ;
+                  :hasAuthoredBy :Tim_Ferriss ;
+                  :hasGenre :Education ,
+                            :Non-Fiction ,
+                            :Psychology ,
+                            :Self-Help ;
+                  :hasNoOfPages 308 ;
+                  :hasPublishedYear 2007 ;
+                  rdfs:label "The 4-Hour Workweek" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_48_Laws_of_Power
+:The_48_Laws_of_Power rdf:type owl:NamedIndividual ,
+                               :Books ;
+                      :hasAuthoredBy :Robert_Greene ;
+                      :hasGenre :History ,
+                                :Non-Fiction ,
+                                :Psychology ,
+                                :Self-Help ;
+                      :hasNoOfPages 1998 ,
+                                    452 ;
+                      rdfs:label "The 48 Laws of Power" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_50th_Law
+:The_50th_Law rdf:type owl:NamedIndividual ,
+                       :Books ;
+              :hasAuthoredBy :Robert_Greene ;
+              :hasGenre :History ,
+                        :Non-Fiction ,
+                        :Psychology ,
+                        :Self-Help ;
+              :hasNoOfPages 304 ;
+              :hasPublishedYear 2009 ;
+              rdfs:label "The 50th Law" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Laws_of_Human_Nature
+:The_Laws_of_Human_Nature rdf:type owl:NamedIndividual ,
+                                   :Books ;
+                          :hasAuthoredBy :Robert_Greene ;
+                          :hasGenre :History ,
+                                    :Non-Fiction ,
+                                    :Psychology ,
+                                    :Self-Help ;
+                          :hasNoOfPages 984 ;
+                          :hasPublishedYear 2018 ;
+                          rdfs:label "The Laws of Human Nature" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Murder_of_Roger_Ackroyd
+:The_Murder_of_Roger_Ackroyd rdf:type owl:NamedIndividual ,
+                                      :Books ;
+                             :hasAuthoredBy :Agatha_Christie ;
+                             :hasGenre :Crime ,
+                                       :Fiction ,
+                                       :Mystery ,
+                                       :Thriller ;
+                             :hasNoOfPages 312 ;
+                             :hasPublishedYear 1926 ;
+                             rdfs:label "The Murder of Roger Ackroyd" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Old_Man_and_the_Sea
+:The_Old_Man_and_the_Sea rdf:type owl:NamedIndividual ,
+                                  :Books ;
+                         :hasAuthoredBy :Ernest_Hemingway ;
+                         :hasGenre :Fiction ;
+                         :hasNoOfPages 127 ;
+                         :hasPublishedYear 1952 ;
+                         rdfs:label "The Old Man and the Sea" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Power_of_Habit
+:The_Power_of_Habit rdf:type owl:NamedIndividual ,
+                             :Books ;
+                    :hasAuthoredBy :Charles_Duhigg ;
+                    :hasGenre :Non-Fiction ,
+                              :Science ,
+                              :Self-Help ;
+                    :hasNoOfPages 371 ;
+                    :hasPublishedYear 2012 ;
+                    rdfs:label "The Power of Habit" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Priory_of_the_Orange_Tree
+:The_Priory_of_the_Orange_Tree rdf:type owl:NamedIndividual ,
+                                        :Books ;
+                               :hasAuthoredBy :Samantha_Shannon ;
+                               :hasGenre :Fantasy ,
+                                         :Fiction ,
+                                         :Science ;
+                               :hasNoOfPages 844 ;
+                               :hasPublishedYear 2019 ;
+                               rdfs:label "The Priory of the Orange Tree" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Subtle_Art_of_Not_Giving_a_Fuck
+:The_Subtle_Art_of_Not_Giving_a_Fuck rdf:type owl:NamedIndividual ,
+                                              :Books ;
+                                     :hasAuthoredBy :Mark_Manson ;
+                                     :hasGenre :Non-Fiction ,
+                                               :Philosophy ,
+                                               :Psychology ,
+                                               :Self-Help ;
+                                     :hasNoOfPages 224 ;
+                                     :hasPublishedYear 2016 ;
+                                     rdfs:label "The Subtle Art of Not Giving a Fuck" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Sword_of_Kaigen
+:The_Sword_of_Kaigen rdf:type owl:NamedIndividual ,
+                              :Books ;
+                     :hasAuthoredBy :ML_Wang ;
+                     :hasGenre :Action ,
+                               :Fantasy ,
+                               :Fiction ;
+                     :hasNoOfPages 651 ;
+                     :hasPublishedYear 2019 ;
+                     rdfs:label "The Sword of Kaigen" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Tipping_Point
+:The_Tipping_Point rdf:type owl:NamedIndividual ,
+                            :Books ;
+                   :hasAuthoredBy :Malcolm_Gladwell ;
+                   :hasGenre :Education ,
+                             :Non-Fiction ,
+                             :Psychology ;
+                   :hasNoOfPages 304 ;
+                   :hasPublishedYear 2000 ;
+                   rdfs:label "The Tipping Point" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#The_Wisdom_of_Insecurity
+:The_Wisdom_of_Insecurity rdf:type owl:NamedIndividual ,
+                                   :Books ;
+                          :hasAuthoredBy :Alan_Watts ;
+                          :hasGenre :Non-Fiction ,
+                                    :Philosophy ,
+                                    :Zen ;
+                          :hasNoOfPages 109 ;
+                          :hasPublishedYear 1951 ;
+                          rdfs:label "The Wisdom of Insecurity" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Thriller
+:Thriller rdf:type owl:NamedIndividual ,
+                   :Genre .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Tim_Ferriss
+:Tim_Ferriss rdf:type owl:NamedIndividual ,
+                      :Author ;
+             :hasBornCountry :United_States_of_America ;
+             :isAuthorOf :The4HourBody ,
+                         :The4HourChef ,
+                         :The4HourWorkWeek ;
+             :hasBornYear 1977 ;
+             rdfs:label "Tim Ferris" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#United_Kingdom
+:United_Kingdom rdf:type owl:NamedIndividual ,
+                         :Country ;
+                rdfs:label "UK" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#United_States_of_America
+:United_States_of_America rdf:type owl:NamedIndividual ,
+                                   :Country ;
+                          rdfs:label "USA" .
+
+
+###  http://www.semanticweb.org/neeraj/ontologies/2020/10/books-ontology#Zen
+:Zen rdf:type owl:NamedIndividual ,
+              :Genre .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :Books
+                :Genre
+                :Person
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
